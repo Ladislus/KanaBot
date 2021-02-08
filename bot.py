@@ -7,7 +7,7 @@ import env
 
 client = Client()
 
-globalCfg = globalconfig.from_file()
+globalCfg = globalconfig.globalConfig_from_file()
 
 
 @client.event
