@@ -39,7 +39,7 @@ class GlobalConfig:
         return self._channels
 
 
-def from_file() -> GlobalConfig:
+def globalConfig_from_file() -> GlobalConfig:
     """
     Function to create a GlobalConfig from a .cfg file
     :return: An instance of GlobalConfig
@@ -54,7 +54,7 @@ def from_file() -> GlobalConfig:
     )
 
 
-def to_file(globalConfig: GlobalConfig):
+def globalConfig_to_file(globalConfig: GlobalConfig):
     """
     Function to write the configuration to a .cfg file
     :param globalConfig: The configuration to write

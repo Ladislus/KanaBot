@@ -94,7 +94,7 @@ class GameConfig:
         return self._delay
 
 
-def from_file() -> GameConfig:
+def gameConfig_from_file() -> GameConfig:
     """
     Function to create a GameConfig from a .cfg file
     :return: An instance of GameConfig
@@ -112,7 +112,7 @@ def from_file() -> GameConfig:
     )
 
 
-def to_file(gameConfig: GameConfig):
+def gameConfig_to_file(gameConfig: GameConfig):
     """
     Function to write the configuration to a .cfg file
     :param gameConfig: The configuration to write
