@@ -16,11 +16,8 @@ class Game:
             \tCurrent question number: {self._currentQuestion}\n\
             {self._gameConfig}'
 
-    def print(self):
+    def debug(self):
         print(self)
-
-    def printConfig(self):
-        print(self._gameConfig)
 
     def play(self):
         self._status = GameStatus.QUESTION
