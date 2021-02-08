@@ -14,7 +14,7 @@ class GlobalConfig:
         self._guild: Guild = None
         self._channels: set[str] = (channels if channels is not None else {'bot'})
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Global config: \n\
             \tGuild: {self._guild}\n\
             \tActivated: {self._activated}\n\
@@ -47,8 +47,8 @@ def globalConfig_from_file() -> GlobalConfig:
     config: ConfigParser = ConfigParser()
     config.read('config/config.cfg')
     return GlobalConfig(
-        activated=bool(config['GLOBAL']['activated']),
-        adminRequired=bool(config['GLOBAL']['adminRequired']),
+        activated=config['GLOBAL']['activated'].lstrip().rstrip() == "True",
+        adminRequired=config['GLOBAL']['adminRequired'].lstrip().rstrip() == "True",
         admins=set(map(int, config['GLOBAL']['admins'].split(','))) if config['GLOBAL']['admins'] != '' else set(),
         channels=set(config['GLOBAL']['channels'].split(','))
     )

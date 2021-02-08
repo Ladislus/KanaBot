@@ -23,7 +23,7 @@ class GameConfig:
         self._propositions: int = propositions
         self._delay: int = delay
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Game config: \n\
             \tHiragana activated: {self._hiraganaActivated}\n\
             \tHiragana list: {self._hiraganas}\n\
@@ -102,9 +102,9 @@ def gameConfig_from_file() -> GameConfig:
     config: ConfigParser = ConfigParser()
     config.read('config/config.cfg')
     return GameConfig(
-        hiraganaActivated=bool(config['GAME']['hiraganaActivated']),
-        katakanaActivated=bool(config['GAME']['katakanaActivated']),
-        manuelStep=bool(config['GAME']['manualStep']),
+        hiraganaActivated=config['GAME']['hiraganaActivated'].lstrip().rstrip() == "True",
+        katakanaActivated=config['GAME']['katakanaActivated'].lstrip().rstrip() == "True",
+        manuelStep=config['GAME']['manualStep'].lstrip().rstrip() == True,
         responseTime=int(config['GAME']['responseTime']),
         questions=int(config['GAME']['questions']),
         propositions=int(config['GAME']['propositions']),
