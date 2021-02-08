@@ -1,7 +1,7 @@
 from discord import Client, Message
 from discord.utils import get
 from config import globalconfig
-from utils import validate
+from utils import isValidCommand
 import env
 
 
@@ -25,7 +25,7 @@ async def on_ready():
 
 @client.event
 async def on_message(msg: Message):
-    if validate(msg, globalCfg):
+    if isValidCommand(msg, globalCfg):
         print('ok')
 
 

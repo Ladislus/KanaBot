@@ -22,7 +22,7 @@ def is_command(msg: str) -> bool:
     return msg.lstrip()[0] == '!'
 
 
-def validate(msg: Message, globalCfg: GlobalConfig) -> bool:
+def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
     """
     Function to check if a message is a command, and if it's authorized
     :param msg: The message to check
