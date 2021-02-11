@@ -1,5 +1,6 @@
 from discord import Client, Message
 from discord.utils import get
+from command import Command
 from config import globalconfig
 from utils import isValidCommand
 import env
@@ -27,6 +28,8 @@ async def on_ready():
 async def on_message(msg: Message):
     if isValidCommand(msg, globalCfg):
         print('ok')
+        com: Command = Command(msg)
+        print(com)
 
 
 client.run(env.TOKEN)

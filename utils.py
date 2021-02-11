@@ -13,13 +13,31 @@ def is_owner(u: User) -> bool:
     return OWNER == f'{u.name}#{u.discriminator}'
 
 
-def is_command(msg: str) -> bool:
+def sanitize(s: str) -> str:
+    """
+    Function to remove leading and trailling spaces
+    :param s: The string to sanitize
+    :return: The sanitized string
+    """
+    return s.lstrip().rstrip()
+
+
+def isCommand(msg: str) -> bool:
     """
     Function to check if the message start with a '!' (remove spaces)
-    :param msg: the message to test (discord.Message)
+    :param msg: the message to test
     :return: True if the message starts with '!', False otherwise
     """
-    return msg.lstrip()[0] == '!'
+    return (sanitize(msg)[0] == '!') if len(msg) > 0 else False
+
+
+def isOptionalArg(msg: str) -> bool:
+    """
+    Function to check if the message start with '--' (remove spaces)
+    :param msg: the message to test
+    :return: True if the message starts with '--', False otherwise
+    """
+    return (sanitize(msg)[:2] == '--') if len(msg) > 0 else False
 
 
 def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
@@ -30,6 +48,6 @@ def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
     :return: True if the message should be interpreted as a command, False otherwise
     """
     return globalCfg.activated and \
-        is_command(msg.content) and \
+        isCommand(msg.content) and \
         msg.channel.name in globalCfg.channels and \
         (not globalCfg.adminRequired or (msg.author.id in globalCfg.admins or is_owner(msg.author)))
