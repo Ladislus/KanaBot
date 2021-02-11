@@ -1,4 +1,5 @@
 from discord import Message
+from .commandoptions import Option
 from .logger import Logger
 from .utils import isCommand, is_owner
 from config.globalconfig import GlobalConfig
@@ -36,8 +37,11 @@ class Command:
             \tArgs: {self._args}\n'
 
     def execute(self):
-        Command._logger.log(self._rawCommand)
-        #TODO
+        if self._name not in Command._commands:
+            Command._logger.log(f'Command "{self._name}" dosen\'t exist')
+        elif self._argCount < Command._commands[self._name][Option.ARGUMENT_REQUIRED]:
+            Command._logger.log(f'Command "{self._name}" requires {str(Command._commands[self._name][Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
+        Command._logger.log(f'{self._rawCommand} executed')
 
     @staticmethod
     def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
