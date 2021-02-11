@@ -37,11 +37,19 @@ class Command:
             \tArgs: {self._args}\n'
 
     def execute(self):
+        # TODO more tests
+        # TODO Split into smaller methods
         if self._name not in Command._commands:
             Command._logger.log(f'Command "{self._name}" dosen\'t exist')
         elif self._argCount < Command._commands[self._name][Option.ARGUMENT_REQUIRED]:
-            Command._logger.log(f'Command "{self._name}" requires {str(Command._commands[self._name][Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
-        Command._logger.log(f'{self._rawCommand} executed')
+            Command._logger.log(
+                f'Command "{self._name}" requires {str(Command._commands[self._name][Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
+        else:
+            if Command._commands[self._name][Option.ARGUMENT_REQUIRED] > 0:
+                Command._commands[self._name][Option.FUNCTION](self._args)
+            else:
+                Command._commands[self._name][Option.FUNCTION]()
+            Command._logger.log(f'{self._rawCommand} executed')
 
     @staticmethod
     def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
@@ -52,6 +60,6 @@ class Command:
         :return: True if the message should be interpreted as a command, False otherwise
         """
         return globalCfg.activated and \
-            isCommand(msg.content) and \
-            msg.channel.name in globalCfg.channels and \
-            (not globalCfg.adminRequired or (msg.author.id in globalCfg.admins or is_owner(msg.author)))
+               isCommand(msg.content) and \
+               msg.channel.name in globalCfg.channels and \
+               (not globalCfg.adminRequired or (msg.author.id in globalCfg.admins or is_owner(msg.author)))
