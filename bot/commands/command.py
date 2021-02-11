@@ -2,10 +2,12 @@ from discord import Message
 from .logger import Logger
 from .utils import isCommand, is_owner
 from config.globalconfig import GlobalConfig
+from .commandlist import commandlist
 
 
 class Command:
     _logger: Logger = Logger('[COMMAND EXECUTION]')
+    _commands: dict = commandlist
 
     def __init__(self,
                  rawCommand: str,
