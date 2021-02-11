@@ -1,6 +1,6 @@
 from config.gameconfig import GameConfig
-from errors import throw, Error
-from gamestatus import GameStatus
+from .errors import throw, GameError
+from .gamestatus import GameStatus
 
 
 class Game:
@@ -16,9 +16,6 @@ class Game:
             \tCurrent question number: {self._currentQuestion}\n\
             {self._gameConfig}'
 
-    def debug(self):
-        print(self)
-
     def play(self):
         self._status = GameStatus.QUESTION
 
@@ -28,6 +25,6 @@ class Game:
             if self._gameConfig.hiraganaActivated or self._gameConfig.katakanaActivated:
                 self.play()
             else:
-                throw(Error.INVALID_GAME_CONFIGURATION, 'Aucun des deux alphabets n\'est activé')
+                throw(GameError.INVALID_GAME_CONFIGURATION, 'Aucun des deux alphabets n\'est activé')
         else:
-            throw(Error.INVALID_GAME_CONFIGURATION, 'Le nombre de partie est inférieur à 1')
+            throw(GameError.INVALID_GAME_CONFIGURATION, 'Le nombre de partie est inférieur à 1')
