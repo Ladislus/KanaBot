@@ -6,7 +6,7 @@ from .commandlist import commandlist
 
 
 class Command:
-    _logger: Logger = Logger('[COMMAND EXECUTION]')
+    _logger: Logger = Logger('COMMAND EXECUTION')
     _commands: dict = commandlist
 
     def __init__(self,

@@ -8,4 +8,4 @@ class Logger:
 
     def log(self, msg: str):
         with open(self._filepath, 'a') as file:
-            file.write(f'({datetime.utcnow()})[{self._prefix}] {msg}')
+            file.write(f'({datetime.utcnow()})[{self._prefix}] {msg}\n')

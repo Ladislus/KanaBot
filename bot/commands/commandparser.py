@@ -5,7 +5,7 @@ from discord import Message
 
 
 class Parser:
-    _logger: Logger = Logger('[COMMAND CREATED]')
+    _logger: Logger = Logger('COMMAND CREATED')
 
     @staticmethod
     def parse(msg: Message) -> Command:
