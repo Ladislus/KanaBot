@@ -39,13 +39,14 @@ class GlobalConfig:
         return self._channels
 
 
-def globalConfig_from_file() -> GlobalConfig:
+def globalConfig_from_file(filepath: str = 'config/config.cfg') -> GlobalConfig:
     """
     Function to create a GlobalConfig from a .cfg file
+    :param filepath: (Optional) Path to the config file
     :return: An instance of GlobalConfig
     """
     config: ConfigParser = ConfigParser()
-    config.read('config/config.cfg')
+    config.read(filepath)
     return GlobalConfig(
         activated=config['GLOBAL']['activated'].lstrip().rstrip() == "True",
         adminRequired=config['GLOBAL']['adminRequired'].lstrip().rstrip() == "True",
@@ -54,18 +55,19 @@ def globalConfig_from_file() -> GlobalConfig:
     )
 
 
-def globalConfig_to_file(globalConfig: GlobalConfig):
+def globalConfig_to_file(globalConfig: GlobalConfig, filepath: str = 'config/config.cfg'):
     """
     Function to write the configuration to a .cfg file
+    :param filepath: (Optional) Path to the config file
     :param globalConfig: The configuration to write
     """
     config: ConfigParser = ConfigParser()
-    config.read('config/config.cfg')
+    config.read(filepath)
     config['GLOBAL'] = {
         'activated': str(globalConfig.activated),
         'adminRequired': str(globalConfig.adminRequired),
         'admins': ','.join(map(str, globalConfig.admins)),
         'channels': ','.join(globalConfig.channels)
     }
-    with open('config/config.cfg', 'w') as configFile:
+    with open(filepath, 'w') as configFile:
         config.write(configFile)

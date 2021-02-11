@@ -94,13 +94,14 @@ class GameConfig:
         return self._delay
 
 
-def gameConfig_from_file() -> GameConfig:
+def gameConfig_from_file(filepath: str = 'config/config.cfg') -> GameConfig:
     """
     Function to create a GameConfig from a .cfg file
+    :param filepath: (Optional) Path to the config file
     :return: An instance of GameConfig
     """
     config: ConfigParser = ConfigParser()
-    config.read('config/config.cfg')
+    config.read(filepath)
     return GameConfig(
         hiraganaActivated=config['GAME']['hiraganaActivated'].lstrip().rstrip() == "True",
         katakanaActivated=config['GAME']['katakanaActivated'].lstrip().rstrip() == "True",
@@ -112,13 +113,14 @@ def gameConfig_from_file() -> GameConfig:
     )
 
 
-def gameConfig_to_file(gameConfig: GameConfig):
+def gameConfig_to_file(gameConfig: GameConfig, filepath: str = 'config/config.cfg'):
     """
     Function to write the configuration to a .cfg file
     :param gameConfig: The configuration to write
+    :param filepath: (Optional) Path to the config file
     """
     config: ConfigParser = ConfigParser()
-    config.read('config/config.cfg')
+    config.read(filepath)
     config['GAME'] = {
         'hiraganaActivated': str(gameConfig.hiraganaActivated),
         'katakanaActivated': str(gameConfig.katakanaActivated),
@@ -128,5 +130,5 @@ def gameConfig_to_file(gameConfig: GameConfig):
         'propositions': str(gameConfig.propositions),
         'delay': str(gameConfig.delay)
     }
-    with open('config/config.cfg', 'w') as configFile:
+    with open(filepath, 'w') as configFile:
         config.write(configFile)
