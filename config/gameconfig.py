@@ -105,7 +105,7 @@ def gameConfig_from_file(filepath: str = 'config/config.cfg') -> GameConfig:
     return GameConfig(
         hiraganaActivated=config['GAME']['hiraganaActivated'].lstrip().rstrip() == "True",
         katakanaActivated=config['GAME']['katakanaActivated'].lstrip().rstrip() == "True",
-        manuelStep=config['GAME']['manualStep'].lstrip().rstrip() == True,
+        manuelStep=config['GAME']['manualStep'].lstrip().rstrip() is True,
         responseTime=int(config['GAME']['responseTime']),
         questions=int(config['GAME']['questions']),
         propositions=int(config['GAME']['propositions']),
