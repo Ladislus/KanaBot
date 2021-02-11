@@ -1,1 +1,4 @@
-katakanaSet = {}
+katakanaSet = {
+    'basique': {},
+    'complexe': {}
+}
