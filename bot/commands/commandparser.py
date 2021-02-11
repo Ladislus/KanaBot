@@ -10,7 +10,7 @@ class Parser:
     @staticmethod
     def parse(msg: Message) -> Command:
         com_str: list[str] = msg.content.split(' ')
-        name: str = sanitize(com_str[0][:1])
+        name: str = sanitize(com_str[0][1:])
         args: dict = {'args': []}
         argcount: int = 0
         optionalargcount: int = 0
