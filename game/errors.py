@@ -1,11 +1,11 @@
 from enum import Enum
 
 
-class Error(Enum):
+class GameError(Enum):
     INVALID_GAME_CONFIGURATION = '[INVALID GAME CONFIGURATION] Error in the game configuration'
 
 
-def throw(error: Error, reason: str):
+def throw(error: GameError, reason: str):
     """
     Function to print an error related to the bot
     :param error: The type of error
