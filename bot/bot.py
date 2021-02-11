@@ -2,6 +2,7 @@ from config.globalconfig import GlobalConfig
 from .commands.command import Command
 from discord import Client, Message
 from discord.utils import get
+from .commands.commandparser import Parser
 from env import GUILD
 
 
@@ -26,5 +27,5 @@ class Bot(Client):
 
     async def on_message(self, msg: Message):
         if Command.isValidCommand(msg, self._config):
-            com: Command = Command(msg)
+            com: Command = Parser.parse(msg)
             print(com)
