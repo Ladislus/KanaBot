@@ -17,7 +17,7 @@ def sanitize(s: str) -> str:
     :param s: The string to sanitize
     :return: The sanitized string
     """
-    return s.lstrip().rstrip()
+    return s.lstrip().rstrip().lower()
 
 
 def isCommand(msg: str) -> bool:

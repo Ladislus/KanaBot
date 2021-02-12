@@ -23,7 +23,7 @@ class Bot(Client):
         self._config._guild = guild
 
         print(f'{super().user.name} is connected to the following guild: {guild.name}\n')
-        print(self._config)
+        print(self)
 
     async def on_message(self, msg: Message):
         if Command.isValidCommand(msg, self._config):
