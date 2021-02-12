@@ -26,7 +26,7 @@ class Parser:
                 args['args'].append(sanitized)
 
         Parser._logger.log(f'Command "{msg.content}" created by user "{msg.author.name}" in channel "{msg.channel.name}"')
-        return Command(msg.content, name, msg.author.name, msg.channel.name, argcount, optionalargcount, args)
+        return Command(msg.content, name, msg.author.name, msg.channel, argcount, optionalargcount, args)
 
     @staticmethod
     def _isNamedArg(msg: str) -> bool:
