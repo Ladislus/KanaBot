@@ -1,5 +1,6 @@
 from discord import Message
 from discord import TextChannel
+from .commandelement import Element
 from .commandoptions import Option
 from .logger import Logger
 from .utils import isCommand, is_owner
@@ -37,19 +38,28 @@ class Command:
             \tOptionalArgCount: {str(self._optionalArgCount)}\n\
             \tArgs: {self._args}\n'
 
-    def execute(self):
+    async def execute(self):
         # TODO more tests
         # TODO Split into smaller methods
         if self._name not in Command._commands:
             Command._logger.log(f'Command "{self._name}" dosen\'t exist')
-        elif self._argCount < Command._commands[self._name][Option.ARGUMENT_REQUIRED]:
-            Command._logger.log(f'Command "{self._name}" requires {str(Command._commands[self._name][Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
         else:
-            if Command._commands[self._name][Option.ARGUMENT_REQUIRED] > 0:
-                Command._commands[self._name][Option.FUNCTION](self._args)
+            command_infos: dict = Command._commands[self._name]
+
+            if self._argCount < command_infos[Option.ARGUMENT_REQUIRED]:
+                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
             else:
-                Command._commands[self._name][Option.FUNCTION]()
-            Command._logger.log(f'{self._rawCommand} executed')
+                # TODO Check named args
+                elements: dict[Element, object] = self._retrieve_elements(command_infos[Option.ELEMENT_REQUIRED])
+                await Command._commands[self._name][Option.FUNCTION](self._args, elements)
+                Command._logger.log(f'{self._rawCommand} executed')
+
+    def _retrieve_elements(self, command_elements: list[Element]) -> dict[Element, object]:
+        elements: dict[Element, object] = {}
+        # TODO check for other elements
+        if Element.CHANNEL in command_elements:
+            elements[Element.CHANNEL] = self._channel
+        return elements
 
     @staticmethod
     def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:

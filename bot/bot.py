@@ -28,4 +28,4 @@ class Bot(Client):
     async def on_message(self, msg: Message):
         if Command.isValidCommand(msg, self._config):
             com: Command = Parser.parse(msg)
-            com.execute()
+            await com.execute()
