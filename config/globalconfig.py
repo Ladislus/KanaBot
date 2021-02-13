@@ -35,7 +35,7 @@ class GlobalConfig:
         return self._admins
 
     @property
-    def guild(self):
+    def guild(self) -> Guild:
         return self._guild
 
     @property

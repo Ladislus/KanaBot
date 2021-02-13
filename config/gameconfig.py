@@ -66,31 +66,31 @@ class GameConfig:
                 self._katakanas[kat] = rom
 
     @property
-    def hiraganaActivated(self):
+    def hiraganaActivated(self) -> bool:
         return self._hiraganaActivated
 
     @property
-    def katakanaActivated(self):
+    def katakanaActivated(self) -> bool:
         return self._katakanaActivated
 
     @property
-    def manualStep(self):
+    def manualStep(self) -> bool:
         return self._manualStep
 
     @property
-    def responseTime(self):
+    def responseTime(self) -> int:
         return self._responseTime
 
     @property
-    def questions(self):
+    def questions(self) -> int:
         return self._questions
 
     @property
-    def propositions(self):
+    def propositions(self) -> int:
         return self._propositions
 
     @property
-    def delay(self):
+    def delay(self) -> int:
         return self._delay
 
 

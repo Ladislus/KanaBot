@@ -1,8 +1,8 @@
 from env import OWNER
-from discord.abc import User
+from discord import Member
 
 
-def is_owner(u: User) -> bool:
+def is_owner(u: Member) -> bool:
     """
     Function to check if the User passed in parameter is the owner of the bot
     :param u: The User to test

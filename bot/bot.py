@@ -18,13 +18,12 @@ class Bot(Client):
         return f'{self._config}'
 
     @property
-    def config(self):
+    def config(self) -> GlobalConfig:
         return self._config
 
-    async def on_ready(self, ):
+    async def on_ready(self):
         # Problem while fetching the discord guild
         guild = get(super().guilds, name=GUILD)
-        print(guild.members)
         if guild is None:
             exit()
         # Else, save the guild informations
