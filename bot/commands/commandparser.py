@@ -1,14 +1,14 @@
 from .utils import sanitize
 from .logger import Logger
 from .command import Command
-from discord import Message
+from discord import Message, Client
 
 
 class Parser:
     _logger: Logger = Logger('COMMAND CREATED')
 
     @staticmethod
-    def parse(msg: Message) -> Command:
+    def parse(client: Client, msg: Message) -> Command:
         com_str: list[str] = msg.content.split(' ')
         name: str = sanitize(com_str[0][1:])
         args: dict = {'args': []}
@@ -26,7 +26,7 @@ class Parser:
                 args['args'].append(sanitized)
 
         Parser._logger.log(f'Command "{msg.content}" created by user "{msg.author.name}" in channel "{msg.channel.name}"')
-        return Command(msg.content, name, msg.author.name, msg.channel, argcount, optionalargcount, args)
+        return Command(client, msg.content, name, msg.author.name, msg.channel, argcount, optionalargcount, args)
 
     @staticmethod
     def _isNamedArg(msg: str) -> bool:

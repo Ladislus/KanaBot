@@ -1,5 +1,4 @@
-from discord import Message
-from discord import TextChannel
+from discord import Message, TextChannel, Client
 from .commandelement import Element
 from .commandoptions import Option
 from .logger import Logger
@@ -13,6 +12,7 @@ class Command:
     _commands: dict = commandlist
 
     def __init__(self,
+                 client: Client,
                  rawCommand: str,
                  name: str,
                  author: str,
@@ -20,6 +20,7 @@ class Command:
                  argCount: int,
                  optionalArgCount: int,
                  args: dict):
+        self._client: Client = client
         self._rawCommand: str = rawCommand
         self._name: str = name
         self._author: str = author
@@ -48,6 +49,8 @@ class Command:
 
             if self._argCount < command_infos[Option.ARGUMENT_REQUIRED]:
                 Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
+            elif self._argCount > command_infos[Option.ARGUMENT_REQUIRED] and not command_infos[Option.VARARGS_SUPPORTED]:
+                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, but {str(self._argCount)} were given ({self._args})')
             else:
                 # TODO Check named args
                 elements: dict[Element, object] = self._retrieve_elements(command_infos[Option.ELEMENT_REQUIRED])
@@ -59,6 +62,8 @@ class Command:
         # TODO check for other elements
         if Element.CHANNEL in command_elements:
             elements[Element.CHANNEL] = self._channel
+        if Element.USERS in command_elements:
+            elements[Element.USERS] = self._client.config.guild.members
         return elements
 
     @staticmethod
