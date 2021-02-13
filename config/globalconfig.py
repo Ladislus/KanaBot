@@ -35,6 +35,10 @@ class GlobalConfig:
         return self._admins
 
     @property
+    def guild(self):
+        return self._guild
+
+    @property
     def channels(self) -> set[str]:
         return self._channels
 
