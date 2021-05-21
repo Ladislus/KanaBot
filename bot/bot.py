@@ -1,8 +1,8 @@
-from config.globalconfig import GlobalConfig
-from .commands.command import Command
 from discord import Client, Message, Intents
 from discord.utils import get
-from .commands.commandparser import Parser
+
+from .commands import Command, parse, isValidCommand
+from config import GlobalConfig
 from env import GUILD
 
 
@@ -26,13 +26,13 @@ class Bot(Client):
         guild = get(super().guilds, name=GUILD)
         if guild is None:
             exit()
-        # Else, save the guild informations
+        # Else, save the guild information
         self._config._guild = guild
 
         print(f'{super().user.name} is connected to the following guild: {guild.name}\n')
         print(self)
 
     async def on_message(self, msg: Message):
-        if Command.isValidCommand(msg, self._config):
-            com: Command = Parser.parse(self, msg)
+        if isValidCommand(msg, self._config):
+            com: Command = parse(self, msg)
             await com.execute()

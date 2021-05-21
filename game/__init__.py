@@ -1,2 +1,1 @@
-from . import game
-from . import gamestatus
+from .game import Game

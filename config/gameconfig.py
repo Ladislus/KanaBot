@@ -35,7 +35,7 @@ class GameConfig:
             \tNumber of propositions: {self._propositions}\n\
             \tDelay between question: {self._delay}s\n'
 
-    def add_hiragana(self, family: Family):
+    def add_hiragana(self, family: Family) -> None:
         """
         Method to add a hiragana family set to the game set
         :param family: The hiragana family to add
@@ -50,7 +50,7 @@ class GameConfig:
             for hir, rom in hiraganasSet[Family.COMPLEXE.name]:
                 self._hiraganas[hir] = rom
 
-    def add_katakana(self, family: Family):
+    def add_katakana(self, family: Family) -> None:
         """
         Method to add a katakana family set to the game set
         :param family: The katakana family to add
@@ -94,7 +94,7 @@ class GameConfig:
         return self._delay
 
 
-def gameConfig_from_file(filepath: str = 'config/config.cfg') -> GameConfig:
+def gameConfigFromFile(filepath: str = 'config/config.cfg') -> GameConfig:
     """
     Function to create a GameConfig from a .cfg file
     :param filepath: (Optional) Path to the config file
@@ -113,7 +113,7 @@ def gameConfig_from_file(filepath: str = 'config/config.cfg') -> GameConfig:
     )
 
 
-def gameConfig_to_file(gameConfig: GameConfig, filepath: str = 'config/config.cfg'):
+def gameConfigToFile(gameConfig: GameConfig, filepath: str = 'config/config.cfg') -> None:
     """
     Function to write the configuration to a .cfg file
     :param gameConfig: The configuration to write

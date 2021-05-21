@@ -1,7 +1,7 @@
-from config.globalconfig import globalConfig_from_file
-from bot.bot import Bot
+from bot import Bot
+from config import globalConfigFromFile
 from env import TOKEN
 
 if __name__ == '__main__':
-    bot: Bot = Bot(globalConfig_from_file())
+    bot: Bot = Bot(globalConfigFromFile())
     bot.run(TOKEN)

@@ -1,15 +1,11 @@
-from discord import Message, TextChannel, Client
-from .commandelement import Element
-from .commandoptions import Option
+from discord import TextChannel, Client
 from .logger import Logger
-from .utils import isCommand, is_owner
-from config.globalconfig import GlobalConfig
-from .commandlist import commandlist
+from .commands import commands, Element, Option
 
 
 class Command:
     _logger: Logger = Logger('COMMAND EXECUTION')
-    _commands: dict = commandlist
+    _commands: dict = commands
 
     def __init__(self,
                  client: Client,
@@ -48,9 +44,11 @@ class Command:
             command_infos: dict = Command._commands[self._name]
 
             if self._argCount < command_infos[Option.ARGUMENT_REQUIRED]:
-                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, only {str(self._argCount)} given')
+                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, '
+                                    f'only {str(self._argCount)} given')
             elif self._argCount > command_infos[Option.ARGUMENT_REQUIRED] and not command_infos[Option.VARARGS_SUPPORTED]:
-                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, but {str(self._argCount)} were given ({self._args})')
+                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[Option.ARGUMENT_REQUIRED])}, '
+                                    f'but {str(self._argCount)} were given ({self._args})')
             else:
                 # TODO Check named args
                 elements: dict[Element, object] = self._retrieve_elements(command_infos[Option.ELEMENT_REQUIRED])
@@ -65,16 +63,3 @@ class Command:
         if Element.USERS in command_elements:
             elements[Element.USERS] = self._client.config.guild.members
         return elements
-
-    @staticmethod
-    def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
-        """
-        Function to check if a message is a command, and if it's authorized
-        :param msg: The message to check
-        :param globalCfg: The configuration file
-        :return: True if the message should be interpreted as a command, False otherwise
-        """
-        return globalCfg.activated and \
-            isCommand(msg.content) and \
-            msg.channel.name in globalCfg.channels and \
-            (not globalCfg.adminRequired or (msg.author.id in globalCfg.admins or is_owner(msg.author)))

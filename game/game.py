@@ -1,4 +1,4 @@
-from config.gameconfig import GameConfig
+from config import GameConfig
 from .errors import throw, GameError
 from .gamestatus import GameStatus
 

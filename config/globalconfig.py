@@ -1,3 +1,4 @@
+from typing import Optional
 from discord import Guild
 from configparser import ConfigParser
 
@@ -11,7 +12,7 @@ class GlobalConfig:
         self._activated: bool = activated
         self._adminRequired: bool = adminRequired
         self._admins: set[int] = (admins if admins is not None else set())
-        self._guild: Guild = None
+        self._guild: Optional[Guild] = None
         self._channels: set[str] = (channels if channels is not None else {'bot'})
 
     def __repr__(self) -> str:
@@ -43,7 +44,7 @@ class GlobalConfig:
         return self._channels
 
 
-def globalConfig_from_file(filepath: str = 'config/config.cfg') -> GlobalConfig:
+def globalConfigFromFile(filepath: str = 'config/config.cfg') -> GlobalConfig:
     """
     Function to create a GlobalConfig from a .cfg file
     :param filepath: (Optional) Path to the config file
@@ -59,7 +60,7 @@ def globalConfig_from_file(filepath: str = 'config/config.cfg') -> GlobalConfig:
     )
 
 
-def globalConfig_to_file(globalConfig: GlobalConfig, filepath: str = 'config/config.cfg'):
+def globalConfigToFile(globalConfig: GlobalConfig, filepath: str = 'config/config.cfg') -> None:
     """
     Function to write the configuration to a .cfg file
     :param filepath: (Optional) Path to the config file

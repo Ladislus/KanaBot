@@ -1,3 +1,3 @@
-from . import hiragana
-from . import katakana
-from . import families
+from .families import Family
+from .hiragana import hiraganasSet
+from .katakana import katakanaSet

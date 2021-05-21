@@ -1,2 +1,2 @@
-from . import bot
-from . import commands
+from .bot import Bot
+from .commands import *
