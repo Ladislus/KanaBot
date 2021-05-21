@@ -1,12 +1,14 @@
 from discord import Client, Message, Intents
 from discord.utils import get
 
-from .commands import Command, parse, isValidCommand
-from config import GlobalConfig
-from env import GUILD
+from commands import Command, parse, isValidCommand
+from config import GlobalConfig, globalConfigFromFile
+from utils import GUILD, TOKEN, Logger, ExitCode
 
 
 class Bot(Client):
+    _logger = Logger("BOT")
+
     def __init__(self, config: GlobalConfig, **options):
         # Option to enable list of members
         intent: Intents = Intents.default()
@@ -25,14 +27,20 @@ class Bot(Client):
         # Problem while fetching the discord guild
         guild = get(super().guilds, name=GUILD)
         if guild is None:
-            exit()
+            Bot._logger.log(f'Error: couldn\'t find guild named {GUILD}, EXITING')
+            exit(ExitCode.DISCORD_ERROR)
         # Else, save the guild information
         self._config._guild = guild
 
-        print(f'{super().user.name} is connected to the following guild: {guild.name}\n')
-        print(self)
+        Bot._logger.log(f'{super().user.name} connected to "{guild.name}"')
+        Bot._logger.log(repr(self))
 
     async def on_message(self, msg: Message):
         if isValidCommand(msg, self._config):
             com: Command = parse(self, msg)
             await com.execute()
+
+
+if __name__ == '__main__':
+    bot: Bot = Bot(globalConfigFromFile())
+    bot.run(TOKEN)

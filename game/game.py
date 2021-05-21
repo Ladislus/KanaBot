@@ -1,9 +1,21 @@
 from config import GameConfig
 from .errors import throw, GameError
-from .gamestatus import GameStatus
+from enum import Enum, auto
+from commands import Logger
+
+
+class GameStatus(Enum):
+    CONFIGURATION = auto()
+    QUESTION = auto()
+    RESPONDING = auto()
+    CORRECTING = auto()
+    WAITING = auto()
+    END = auto()
 
 
 class Game:
+    _logger = Logger("GAME")
+
     def __init__(self, gameConfig: GameConfig):
         self._gameConfig = gameConfig
         self._status: GameStatus = GameStatus.CONFIGURATION

@@ -1,8 +1,8 @@
 from config import GlobalConfig
-from .logger import Logger
+from utils.logger import Logger
 from .command import Command
 from discord import Message, Client
-from env import OWNER
+from utils.env import OWNER
 from discord import Member
 
 _logger: Logger = Logger('COMMAND CREATED')

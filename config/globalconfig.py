@@ -16,7 +16,7 @@ class GlobalConfig:
         self._channels: set[str] = (channels if channels is not None else {'bot'})
 
     def __repr__(self) -> str:
-        return f'Global config: \n\
+        return f'Global configuration: \n\
             \tGuild: {self._guild}\n\
             \tActivated: {self._activated}\n\
             \tAdmin required: {self._adminRequired}\n\

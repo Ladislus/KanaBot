@@ -3,6 +3,7 @@ from discord import TextChannel
 from discord.utils import get
 from typing import Callable, Optional, Any, Tuple
 from enum import Enum, auto
+from utils import Logger
 
 F = Callable[[...], Tuple[bool, str]]
 
@@ -27,6 +28,7 @@ class DiscordElement(Enum):
 
 _start: time = time()
 commands: C = dict()
+_logger = Logger("COMMAND CREATOR")
 
 
 def register(
@@ -40,15 +42,17 @@ def register(
         elements = [DiscordElement.CHANNEL]
 
     def wrapper(function: F) -> F:
-        assert name not in commands
-        commands[name] = {
-            CommandElement.DESCRIPTION: description,
-            CommandElement.ARGUMENT_REQUIRED: arguments,
-            CommandElement.ELEMENT_REQUIRED: elements,
-            CommandElement.VARARGS: varargs,
-            CommandElement.NAMED_ARGUMENTS: named,
-            CommandElement.FUNCTION: function
-        }
+        if name in commands:
+            _logger.log(f'Command {name} already defined, skipping')
+        else:
+            commands[name] = {
+                CommandElement.DESCRIPTION: description,
+                CommandElement.ARGUMENT_REQUIRED: arguments,
+                CommandElement.ELEMENT_REQUIRED: elements,
+                CommandElement.VARARGS: varargs,
+                CommandElement.NAMED_ARGUMENTS: named,
+                CommandElement.FUNCTION: function
+            }
         return function
 
     return wrapper

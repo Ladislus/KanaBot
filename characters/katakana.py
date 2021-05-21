@@ -1,4 +1,6 @@
+from .family import Family
+
 katakanaSet = {
-    'basique': {},
-    'complexe': {}
+    Family.BASIC: {},
+    Family.COMPLEXE: {}
 }

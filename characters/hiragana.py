@@ -1,5 +1,7 @@
-hiraganasSet = {
-    'basique': {
+from .family import Family
+
+hiraganasSet: dict[Family, dict[str, str]] = {
+    Family.BASIC: {
         'あ': 'A',
         'い': 'I',
         'う': 'U',
@@ -49,7 +51,5 @@ hiraganasSet = {
         'を': 'WO',
         'ん': 'N'
     },
-    'complexe': {
-
-    }
+    Family.COMPLEXE: {}
 }

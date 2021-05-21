@@ -1,5 +1,5 @@
 from discord import TextChannel, Client
-from .logger import Logger
+from utils.logger import Logger
 from .commands import commands, DiscordElement, CommandElement
 
 
@@ -54,9 +54,9 @@ class Command:
                 elements: dict[DiscordElement, object] = self._retrieve_elements(command_infos[CommandElement.ELEMENT_REQUIRED])
                 result: (bool, str) = await Command._commands[self._name][CommandElement.FUNCTION](self._args, elements)
                 if result[0]:
-                    Command._logger.log(f'{self._rawCommand} executed with success')
+                    Command._logger.log(f'"{self._rawCommand}" executed with success')
                 else:
-                    Command._logger.log(f'{self._rawCommand} error: {result[1]}')
+                    Command._logger.log(f'"{self._rawCommand}" error: {result[1]}')
 
     def _retrieve_elements(self, command_elements: list[DiscordElement]) -> dict[DiscordElement, object]:
         elements: dict[DiscordElement, object] = {}

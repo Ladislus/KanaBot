@@ -1,6 +1,4 @@
-from characters.families import Family
-from characters.hiragana import hiraganasSet
-from characters.katakana import katakanaSet
+from characters import Family, hiraganasSet, katakanaSet
 from configparser import ConfigParser
 
 
@@ -35,14 +33,14 @@ class GameConfig:
             \tNumber of propositions: {self._propositions}\n\
             \tDelay between question: {self._delay}s\n'
 
-    def add_hiragana(self, family: Family) -> None:
+    def addHiragana(self, family: Family) -> None:
         """
         Method to add a hiragana family set to the game set
         :param family: The hiragana family to add
         """
         if family == Family.ALL:
-            self.add_hiragana(Family.BASIC)
-            self.add_hiragana(Family.COMPLEXE)
+            self.addHiragana(Family.BASIC)
+            self.addHiragana(Family.COMPLEXE)
         elif family == Family.BASIC:
             for hir, rom in hiraganasSet[Family.BASIC.name]:
                 self._hiraganas[hir] = rom
@@ -50,14 +48,14 @@ class GameConfig:
             for hir, rom in hiraganasSet[Family.COMPLEXE.name]:
                 self._hiraganas[hir] = rom
 
-    def add_katakana(self, family: Family) -> None:
+    def addKatakana(self, family: Family) -> None:
         """
         Method to add a katakana family set to the game set
         :param family: The katakana family to add
         """
         if family == Family.ALL:
-            self.add_katakana(Family.BASIC)
-            self.add_katakana(Family.COMPLEXE)
+            self.addKatakana(Family.BASIC)
+            self.addKatakana(Family.COMPLEXE)
         elif family == Family.BASIC:
             for kat, rom in katakanaSet[Family.BASIC.name]:
                 self._katakanas[kat] = rom
