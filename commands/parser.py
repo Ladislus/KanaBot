@@ -1,8 +1,10 @@
+from typing import Optional
+
 from config import GlobalConfig
 from utils.logger import Logger
 from .command import Command
 from discord import Message, Client
-from utils.env import OWNER
+from utils import OWNER, Injector, ExitCode
 from discord import Member
 
 _logger: Logger = Logger('COMMAND CREATED')
@@ -10,6 +12,12 @@ _prefix: str = "!"
 
 
 def parse(client: Client, msg: Message) -> Command:
+
+    config: Optional[GlobalConfig] = Injector.getConfig()
+    if config is None:
+        _logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
+        exit(ExitCode.INJECTOR_ERROR)
+
     com_str: list[str] = msg.content.split(' ')
     name: str = _sanitize(com_str[0][1:])
     args: dict = {'args': []}
@@ -26,8 +34,8 @@ def parse(client: Client, msg: Message) -> Command:
             argcount += 1
             args['args'].append(sanitized)
 
-    _logger.log(f'Command "{msg.content}" created by user "{msg.author.name}" in channel "{msg.channel.name}"')
-    return Command(client, msg.content, name, msg.author.name, msg.channel, argcount, optionalargcount, args)
+    _logger.log(f'Command "{msg.content}" created by user "{msg.author.name}#{msg.author.discriminator}" in channel "{msg.channel.name}"')
+    return Command(client, msg.content, name, f'{msg.author.name}#{msg.author.discriminator}', msg.channel, argcount, optionalargcount, args)
 
 
 def _isNamedArg(msg: str) -> bool:
@@ -66,15 +74,19 @@ def _isCommand(msg: str) -> bool:
     return (_sanitize(msg)[0] == _prefix) if len(msg) > 0 else False
 
 
-def isValidCommand(msg: Message, globalCfg: GlobalConfig) -> bool:
+def isValidCommand(msg: Message) -> bool:
     """
     Function to check if a message is a command, and if it's authorized
     :param msg: The message to check
-    :param globalCfg: The configuration file
     :return: True if the message should be interpreted as a command, False otherwise
     """
 
-    return globalCfg.activated and \
-           _isCommand(msg.content) and \
-           msg.channel.name in globalCfg.channels and \
-           (not globalCfg.adminRequired or (msg.author.id in globalCfg.admins or _isOwner(msg.author)))
+    config: Optional[GlobalConfig] = Injector.getConfig()
+    if config is None:
+        _logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
+        exit(ExitCode.INJECTOR_ERROR)
+
+    return config.activated and \
+        _isCommand(msg.content) and \
+        msg.channel.name in config.channels and \
+        (not config.adminRequired or (msg.author.id in config.admins or _isOwner(msg.author)))

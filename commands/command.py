@@ -1,5 +1,8 @@
+from typing import Any, Optional
 from discord import TextChannel, Client
-from utils.logger import Logger
+
+from config import GlobalConfig
+from utils import Logger, OWNER, ExitCode, Injector
 from .commands import commands, DiscordElement, CommandElement
 
 
@@ -41,22 +44,29 @@ class Command:
         if self._name not in Command._commands:
             Command._logger.log(f'Command "{self._name}" dosen\'t exist')
         else:
-            command_infos: dict = self._commands[self._name]
+            command_infos: dict[CommandElement, Any] = self._commands[self._name]
 
-            if self._argCount < command_infos[CommandElement.ARGUMENT_REQUIRED]:
-                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
-                                    f'only {str(self._argCount)} given')
-            elif self._argCount > command_infos[CommandElement.ARGUMENT_REQUIRED] and not command_infos[CommandElement.VARARGS]:
-                Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
-                                    f'but {str(self._argCount)} were given ({self._args})')
+            config: Optional[GlobalConfig] = Injector.getConfig()
+            if config is None:
+                Command._logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
+                exit(ExitCode.INJECTOR_ERROR)
+            if command_infos[CommandElement.ADMIN] and (self._author not in config.admins and not self._author == OWNER):
+                Command._logger.log(f'Error: command "{self._name}" require admin privileges, but "{self._author}" is not')
             else:
-                # TODO Check named args
-                elements: dict[DiscordElement, object] = self._retrieve_elements(command_infos[CommandElement.ELEMENT_REQUIRED])
-                result: (bool, str) = await Command._commands[self._name][CommandElement.FUNCTION](self._args, elements)
-                if result[0]:
-                    Command._logger.log(f'"{self._rawCommand}" executed with success')
+                if self._argCount < command_infos[CommandElement.ARGUMENT_REQUIRED]:
+                    Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
+                                        f'only {str(self._argCount)} given')
+                elif self._argCount > command_infos[CommandElement.ARGUMENT_REQUIRED] and not command_infos[CommandElement.VARARGS]:
+                    Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
+                                        f'but {str(self._argCount)} were given ({self._args})')
                 else:
-                    Command._logger.log(f'"{self._rawCommand}" error: {result[1]}')
+                    # TODO Check named args
+                    elements: dict[DiscordElement, object] = self._retrieve_elements(command_infos[CommandElement.ELEMENT_REQUIRED])
+                    result: (bool, str) = await Command._commands[self._name][CommandElement.FUNCTION](self._args, elements)
+                    if result[0]:
+                        Command._logger.log(f'"{self._rawCommand}" executed with success')
+                    else:
+                        Command._logger.log(f'"{self._rawCommand}" error: {result[1]}')
 
     def _retrieve_elements(self, command_elements: list[DiscordElement]) -> dict[DiscordElement, object]:
         elements: dict[DiscordElement, object] = {}
@@ -64,5 +74,9 @@ class Command:
         if DiscordElement.CHANNEL in command_elements:
             elements[DiscordElement.CHANNEL] = self._channel
         if DiscordElement.USERS in command_elements:
-            elements[DiscordElement.USERS] = self._client.config.guild.members
+            config: Optional[GlobalConfig] = Injector.getConfig()
+            if config is None:
+                Command._logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
+                exit(ExitCode.INJECTOR_ERROR)
+            elements[DiscordElement.USERS] = config.guild.members
         return elements

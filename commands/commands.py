@@ -3,7 +3,7 @@ from discord import TextChannel
 from discord.utils import get
 from typing import Callable, Optional, Any, Tuple
 from enum import Enum, auto
-from utils import Logger
+from utils import Logger, ExitCode
 
 F = Callable[[...], Tuple[bool, str]]
 
@@ -14,6 +14,7 @@ class CommandElement(Enum):
     VARARGS = auto()
     NAMED_ARGUMENTS = auto()
     DESCRIPTION = auto()
+    ADMIN = auto()
     FUNCTION = auto()
 
 
@@ -37,22 +38,25 @@ def register(
         arguments: int = 0,
         elements: Optional[list[DiscordElement]] = None,
         varargs: bool = False,
+        admin: bool = False,
         named: Optional[list[str]] = None) -> Callable[[...], F]:
     if elements is None:
         elements = [DiscordElement.CHANNEL]
 
     def wrapper(function: F) -> F:
         if name in commands:
-            _logger.log(f'Command {name} already defined, skipping')
+            _logger.log(f'Command "{name}" already defined, skipping')
         else:
             commands[name] = {
                 CommandElement.DESCRIPTION: description,
                 CommandElement.ARGUMENT_REQUIRED: arguments,
+                CommandElement.ADMIN: admin,
                 CommandElement.ELEMENT_REQUIRED: elements,
                 CommandElement.VARARGS: varargs,
                 CommandElement.NAMED_ARGUMENTS: named,
                 CommandElement.FUNCTION: function
             }
+            _logger.log(f'Command "{name}" loaded')
         return function
 
     return wrapper
@@ -80,6 +84,20 @@ async def uptime(args: dict, elements: dict) -> (bool, str):
     if channel is None:
         return False, f'Command: {__name__}, Error: "Channel is None"'
     await channel.send(f'uptime: {int(time() - _start)}s')
+    return True, ""
+
+
+@register(
+    name="kill",
+    admin=True,
+    description="Command pour tuer billy")
+async def kill(args: dict, elements: dict) -> (bool, str):
+    channel: TextChannel = elements[DiscordElement.CHANNEL]
+    if channel is None:
+        return False, f'Command: {__name__}, Error: "Channel is None"'
+    await channel.send(f'Adieu monde cruel !\nhttps://giphy.com/gifs/studiosoriginals-bye-byebye-3o7btQsLqXMJAPu6Na')
+    _logger.log("Exit command")
+    exit(ExitCode.KILL_COMMAND)
     return True, ""
 
 

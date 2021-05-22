@@ -3,7 +3,7 @@ from discord.utils import get
 
 from commands import Command, parse, isValidCommand
 from config import GlobalConfig, globalConfigFromFile
-from utils import GUILD, TOKEN, Logger, ExitCode
+from utils import GUILD, TOKEN, Logger, ExitCode, Injector
 
 
 class Bot(Client):
@@ -14,6 +14,8 @@ class Bot(Client):
         intent: Intents = Intents.default()
         intent.members = True
         super().__init__(intents=intent, **options)
+
+        Injector.saveConfig(config)
         self._config: GlobalConfig = config
 
     def __repr__(self):
@@ -36,7 +38,7 @@ class Bot(Client):
         Bot._logger.log(repr(self))
 
     async def on_message(self, msg: Message):
-        if isValidCommand(msg, self._config):
+        if isValidCommand(msg):
             com: Command = parse(self, msg)
             await com.execute()
 

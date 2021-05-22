@@ -21,7 +21,7 @@ class GlobalConfig:
             \tActivated: {self._activated}\n\
             \tAdmin required: {self._adminRequired}\n\
             \tAdmin list: {self._admins}\n\
-            \tChannels: {self._channels}\n'
+            \tChannels: {self._channels}'
 
     @property
     def activated(self) -> bool:

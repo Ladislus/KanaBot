@@ -1,7 +1,7 @@
 from os import getenv
 from dotenv import load_dotenv
 from .logger import Logger
-from .errors import ExitCode
+from .codes import ExitCode
 
 _logger = Logger("ENV")
 
