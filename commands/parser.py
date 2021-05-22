@@ -2,7 +2,7 @@ from typing import Optional
 
 from config import GlobalConfig
 from utils.logger import Logger
-from .command import Command
+from .command import Command, defaultArgName
 from discord import Message, Client
 from utils import OWNER, Injector, ExitCode
 from discord import Member
@@ -20,7 +20,7 @@ def parse(client: Client, msg: Message) -> Command:
 
     com_str: list[str] = msg.content.split(' ')
     name: str = _sanitize(com_str[0][1:])
-    args: dict = {'args': []}
+    args: dict = {defaultArgName: []}
     argcount: int = 0
     optionalargcount: int = 0
 

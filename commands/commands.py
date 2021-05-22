@@ -36,10 +36,12 @@ def register(
         name: str,
         description: str = "",
         arguments: int = 0,
-        elements: Optional[list[DiscordElement]] = None,
+        elements: list[DiscordElement] = None,
         varargs: bool = False,
         admin: bool = False,
-        named: Optional[list[str]] = None) -> Callable[[...], F]:
+        named: list[str] = None) -> Callable[[...], F]:
+    if named is None:
+        named = []
     if elements is None:
         elements = [DiscordElement.CHANNEL]
 

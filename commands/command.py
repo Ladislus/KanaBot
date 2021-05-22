@@ -5,6 +5,8 @@ from config import GlobalConfig
 from utils import Logger, OWNER, ExitCode, Injector
 from .commands import commands, DiscordElement, CommandElement
 
+defaultArgName: str = "args"
+
 
 class Command:
     _logger: Logger = Logger('COMMAND EXECUTION')
@@ -39,34 +41,59 @@ class Command:
             \tArgs: {self._args}\n'
 
     async def execute(self):
-        # TODO more tests
-        # TODO Split into smaller methods
         if self._name not in Command._commands:
             Command._logger.log(f'Command "{self._name}" dosen\'t exist')
         else:
-            command_infos: dict[CommandElement, Any] = self._commands[self._name]
+            infos: dict[CommandElement, Any] = self._commands[self._name]
 
-            config: Optional[GlobalConfig] = Injector.getConfig()
-            if config is None:
-                Command._logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
-                exit(ExitCode.INJECTOR_ERROR)
-            if command_infos[CommandElement.ADMIN] and (self._author not in config.admins and not self._author == OWNER):
-                Command._logger.log(f'Error: command "{self._name}" require admin privileges, but "{self._author}" is not')
+            if not self._hasPermission(infos):
+                Command._logger.log(
+                    f'Error: command "{self._name}" require admin privileges, but "{self._author}" is not')
             else:
-                if self._argCount < command_infos[CommandElement.ARGUMENT_REQUIRED]:
-                    Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
-                                        f'only {str(self._argCount)} given')
-                elif self._argCount > command_infos[CommandElement.ARGUMENT_REQUIRED] and not command_infos[CommandElement.VARARGS]:
-                    Command._logger.log(f'Command "{self._name}" requires {str(command_infos[CommandElement.ARGUMENT_REQUIRED])}, '
-                                        f'but {str(self._argCount)} were given ({self._args})')
+                if not self._hasArguments(infos):
+                    Command._logger.log(
+                        f'Command "{self._name}" requires {str(infos[CommandElement.ARGUMENT_REQUIRED])} arguments, '
+                        f'{str(self._argCount)} given')
                 else:
-                    # TODO Check named args
-                    elements: dict[DiscordElement, object] = self._retrieve_elements(command_infos[CommandElement.ELEMENT_REQUIRED])
-                    result: (bool, str) = await Command._commands[self._name][CommandElement.FUNCTION](self._args, elements)
-                    if result[0]:
-                        Command._logger.log(f'"{self._rawCommand}" executed with success')
+                    success, error = self._checkNamedArgs(infos)
+                    if not success:
+                        if error == "":
+                            Command._logger.log(
+                                f'Command "{self._name}" dosen\'t support named arguments')
+                        else:
+                            Command._logger.log(
+                                f'Command "{self._name}" recognize named argument "{error}"')
                     else:
-                        Command._logger.log(f'"{self._rawCommand}" error: {result[1]}')
+                        elements: dict[DiscordElement, object] = self._retrieve_elements(
+                            infos[CommandElement.ELEMENT_REQUIRED])
+                        execution, error = await Command._commands[self._name][CommandElement.FUNCTION](self._args,
+                                                                                                        elements)
+                        if execution:
+                            Command._logger.log(f'"{self._rawCommand}" executed with success')
+                        else:
+                            Command._logger.log(f'"{self._rawCommand}" error: {error}')
+
+    def _hasPermission(self, infos: dict[CommandElement, Any]) -> bool:
+        config: Optional[GlobalConfig] = Injector.getConfig()
+        if config is None:
+            Command._logger.log(f'Couldn\'t get {GlobalConfig} from Injector')
+            exit(ExitCode.INJECTOR_ERROR)
+        if config.adminRequired or infos[CommandElement.ADMIN]:
+            return (self._author in config.admins) or self._author == OWNER
+        return True
+
+    def _hasArguments(self, infos: dict[CommandElement, Any]) -> bool:
+        return (infos[CommandElement.VARARGS] and self._argCount >= infos[CommandElement.ARGUMENT_REQUIRED]) or \
+               self._argCount == infos[CommandElement.ARGUMENT_REQUIRED]
+
+    def _checkNamedArgs(self, infos: dict[CommandElement, Any]) -> (bool, str):
+        if len(infos[CommandElement.NAMED_ARGUMENTS]) > 0:
+            for key in self._args.keys():
+                if key != defaultArgName and key not in infos[CommandElement.NAMED_ARGUMENTS]:
+                    return False, key
+                return True, ""
+        else:
+            return self._optionalArgCount == 0, ""
 
     def _retrieve_elements(self, command_elements: list[DiscordElement]) -> dict[DiscordElement, object]:
         elements: dict[DiscordElement, object] = {}
