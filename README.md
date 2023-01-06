@@ -1,1 +1,1 @@
-# discord_bot_japonais
+# KanaBot
