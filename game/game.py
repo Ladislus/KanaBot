@@ -1,7 +1,8 @@
-from config import GameConfig
-from .errors import throw, GameError
 from enum import Enum, auto
-from commands import Logger
+
+from .game_config import GameConfiguration
+
+from utils import Logger, ExitCode, todo
 
 
 class GameStatus(Enum):
@@ -13,30 +14,40 @@ class GameStatus(Enum):
     END = auto()
 
 
+ScoreType: type = dict[str, int]
+
+
 class Game:
     _logger = Logger("GAME")
 
-    def __init__(self, gameConfig: GameConfig):
-        self._gameConfig = gameConfig
+    def __init__(self, game_config: GameConfiguration):
+        self._config: GameConfiguration = game_config
         self._status: GameStatus = GameStatus.CONFIGURATION
-        self._currentQuestion = 1
-        self._scores = {}
+        self._question_number: int = 1
+        self._scores: ScoreType = {}
 
     def __repr__(self):
         return f'Game settings :\n\
             \tStatus: {self._status.name}\n\
-            \tCurrent question number: {self._currentQuestion}\n\
-            {self._gameConfig}'
+            \tCurrent question number: {self._question_number}\n\
+            {self._config}'
+
+    def _validate_config(self):
+        if not (self._config.hiragana_activated or self._config.katakana_activated):
+            self._logger.error('No alphabet selected')
+            exit(ExitCode.GAME_ERROR)
+
+        if self._question_number > self._config.question_count:
+            self._logger.error('Invalid question count')
+            exit(ExitCode.GAME_ERROR)
 
     def play(self):
         self._status = GameStatus.QUESTION
+        todo("Game::play() not implemented")
 
     def start(self):
-        self._currentQuestion = 1
-        if self._currentQuestion <= self._gameConfig.questions:
-            if self._gameConfig.hiraganaActivated or self._gameConfig.katakanaActivated:
-                self.play()
-            else:
-                throw(GameError.INVALID_GAME_CONFIGURATION, 'Aucun des deux alphabets n\'est activé')
-        else:
-            throw(GameError.INVALID_GAME_CONFIGURATION, 'Le nombre de partie est inférieur à 1')
+        self._question_number = 1
+
+        self._validate_config()
+
+        self.play()

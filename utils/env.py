@@ -1,21 +1,24 @@
 from os import getenv
 from dotenv import load_dotenv
+
 from .logger import Logger
 from .codes import ExitCode
 
-_logger = Logger("ENV")
+_logger: Logger = Logger("ENV")
 
 load_dotenv()
-TOKEN = getenv('DISCORD_TOKEN')
-GUILD = getenv('DISCORD_GUILD')
-OWNER = getenv('DISCORD_OWNER')
+TOKEN: str = getenv('DISCORD_TOKEN')
+GUILD: str = getenv('DISCORD_GUILD')
+OWNER: int = int(getenv('DISCORD_OWNER').strip())
 
-if TOKEN is None:
-    _logger.log("Error: TOKEN is None. EXITING")
+if not TOKEN:
+    _logger.error("TOKEN is None. EXITING")
     exit(ExitCode.CONFIG_ERROR)
-if GUILD is None:
-    _logger.log("Error: GUILD is None. EXITING")
+
+if not GUILD:
+    _logger.error("GUILD is None. EXITING")
     exit(ExitCode.CONFIG_ERROR)
-if OWNER is None:
-    _logger.log("Error: OWNER is None. EXITING")
+
+if not OWNER:
+    _logger.error("OWNER is None. EXITING")
     exit(ExitCode.CONFIG_ERROR)
