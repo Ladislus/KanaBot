@@ -13,7 +13,7 @@ class CommandInformation:
                  regex: str | None,
                  function: CommandFunctionType):
         self.name: str = name.strip().lower()
-        self.description: str = description.strip(),
+        self.description: str = description.strip()
         self.admin_required: bool = admin_required
         self.regex: str | None = regex.strip() if regex else None
         self.function: CommandFunctionType = function

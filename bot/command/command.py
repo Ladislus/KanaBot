@@ -31,6 +31,7 @@ class Command:
     def is_valid(message: str, command_prefix: str) -> bool:
         return message[0] == command_prefix
 
+    # TODO: Check permission
     def _has_permission(self):
         pass
 
@@ -51,6 +52,7 @@ class Command:
         return self._logger
 
 
+# TODO: specify config type
 def try_parse(message: Message, known_commands: CommandSetType, config) -> Command | None:
 
     _logger: Logger = Logger('COMMAND PARSER')
